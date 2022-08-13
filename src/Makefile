@@ -12,7 +12,7 @@ clean:
 	rm -rf *.o test/*.o *.so ../build/* test/meshtig
 
 
-libmeshtig.a: meshtigRouter.o
+libmeshtig.a: meshtigRouter.o meshtigInterface.o meshtigStack.o
 	$(AR) rcs $@ $^
 	mkdir -p ../build/include/meshtig
 	cp *.hpp ../build/include/meshtig/
@@ -21,11 +21,17 @@ libmeshtig.a: meshtigRouter.o
 meshtigRouter.o:
 	$(CC) $(cFlags) -c meshtigRouter.cpp -o meshtigRouter.o
 
+meshtigInterface.o:
+	$(CC) $(cFlags) -c meshtigInterface.cpp -o meshtigInterface.o
+
+meshtigStack.o:
+	$(CC) $(cFlags) -c meshtigStack.cpp -o meshtigStack.o
+
 
 test: test/main.o
 	$(CC) $(binFlags) test/main.cpp -o test/meshtig -L/home/niclas/workspace/libmeshtig/src -lmeshtig -I../build/include
 	cp ./test/meshtig ../build/meshtig-test
-	../build/meshtig-test
+	printf "run\nwhere\nquit\n" | gdb ../build/meshtig-test
 
 test/main.o:
 	$(CC) $(cFlags) -c test/main.cpp -o test/main.o -I../build/include
