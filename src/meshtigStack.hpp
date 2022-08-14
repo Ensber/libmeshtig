@@ -18,7 +18,8 @@ public:
 
     void addInterface(MeshtigInterface* interface);
 
-    
+    void send(uint16_t target, uint32_t size, char* buffer);
+    void (*onreceive)(uint16_t from, uint32_t size, char* buffer) = 0;
 
     ~MeshtigStack();
 };
