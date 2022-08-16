@@ -23,7 +23,7 @@ struct MeshtigInterface {
     // returns a pointer to a charbuffer, or 0 if nothing was received
     char*(*recv) (MeshtigInterface* self, uint32_t &size);
 
-    void* userdata;
+    void* userdata = nullptr;
 };
 
 #endif

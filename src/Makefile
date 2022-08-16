@@ -36,7 +36,7 @@ meshtigFrame.o:
 test: test/main.o test/test-router.o test/common.o test/test-frame.o
 	$(CC) $(binFlags) test/test-router.o test/common.o test/main.o test/test-frame.o -o test/meshtig -L/home/niclas/workspace/libmeshtig/src -lmeshtig -I../build/include
 	cp ./test/meshtig ../build/meshtig-test
-	printf "run\nwhere\nquit\n" | gdb ../build/meshtig-test
+	printf "run\nwhere\nquit\n" | gdb -q ../build/meshtig-test
 
 test/main.o:
 	$(CC) $(cFlags) -c test/main.cpp -o test/main.o -I../build/include

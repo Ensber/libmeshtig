@@ -20,10 +20,12 @@ namespace MeshtigFrame {
         uint16_t to;
         uint32_t size;
         uint8_t* buffer;
+
+
     };
 
-    uint8_t*  frameToBuffer(uint32_t &size, Frame* frame);
-    Frame* bufferToFrame(uint32_t size, uint8_t* buffer);
+    uint8_t* frameToBuffer(uint32_t &size, Frame* frame);
+    Frame*   bufferToFrame(uint32_t size, uint8_t* buffer);
 }
 
 #endif

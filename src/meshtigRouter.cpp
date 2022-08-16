@@ -151,26 +151,29 @@ routingResponse MeshtigRouter::route(uint16_t from, uint16_t to) {
     toNode->visited = visitedStates::PENDING;
 
     // do routing
-    while (true) {
-        int nPending = 0;
-        for (int i = 0; i < this->nodes.size(); i++) {
-            meshtigNode* cNode = this->nodes.at(i);
-            if (cNode->visited == visitedStates::PENDING) {
-                cNode->visited = visitedStates::VISITED;
-                for (int j = 0; j < cNode->links.size(); j++) {
-                    meshtigLink* cLink = cNode->links.at(j);
-                    meshtigNode* otherNode = (cLink->a != cNode) ? cLink->a : cLink->b;
-                    float linkScore = cNode->score + cLink->score;
-                    if (otherNode->score > linkScore) {
-                        otherNode->score = linkScore;
-                        otherNode->bestScoreFrom = cNode->ip;
-                        otherNode->visited = visitedStates::PENDING;
-                        nPending+=1;
+    if (currentTarget != to) {
+        currentTarget = to;
+        while (true) {
+            int nPending = 0;
+            for (int i = 0; i < this->nodes.size(); i++) {
+                meshtigNode* cNode = this->nodes.at(i);
+                if (cNode->visited == visitedStates::PENDING) {
+                    cNode->visited = visitedStates::VISITED;
+                    for (int j = 0; j < cNode->links.size(); j++) {
+                        meshtigLink* cLink = cNode->links.at(j);
+                        meshtigNode* otherNode = (cLink->a != cNode) ? cLink->a : cLink->b;
+                        float linkScore = cNode->score + cLink->score;
+                        if (otherNode->score > linkScore) {
+                            otherNode->score = linkScore;
+                            otherNode->bestScoreFrom = cNode->ip;
+                            otherNode->visited = visitedStates::PENDING;
+                            nPending+=1;
+                        }
                     }
                 }
             }
+            if (!nPending) break;
         }
-        if (!nPending) break;
     }
     
     if (fromNode->bestScoreFrom) {
