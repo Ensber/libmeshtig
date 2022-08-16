@@ -142,16 +142,17 @@ routingResponse MeshtigRouter::route(uint16_t from, uint16_t to) {
         return res;
     }
 
-    for (int i = 0; i < this->nodes.size(); i++) {
-        meshtigNode* cNode = this->nodes.at(i);
-        cNode->bestScoreFrom = 0;
-        cNode->score = INFINITY;
-    }
-    toNode->score = 0;
-    toNode->visited = visitedStates::PENDING;
-
-    // do routing
     if (currentTarget != to) {
+        // reset routings
+        for (int i = 0; i < this->nodes.size(); i++) {
+            meshtigNode* cNode = this->nodes.at(i);
+            cNode->bestScoreFrom = 0;
+            cNode->score = INFINITY;
+        }
+        toNode->score = 0;
+        toNode->visited = visitedStates::PENDING;
+
+        // do routing
         currentTarget = to;
         while (true) {
             int nPending = 0;
