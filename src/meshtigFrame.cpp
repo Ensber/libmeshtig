@@ -3,7 +3,7 @@
 #include <cstdio>
 
 uint8_t* MeshtigFrame::frameToBuffer(uint32_t &size, Frame* frame) {
-    size = 12 + frame->size;
+    size = MeshtigFrame::HEADER_SIZE + frame->size;
     uint8_t* buffer = new uint8_t[size];
 
     buffer[0]  = frame->via >> 8;
@@ -18,8 +18,10 @@ uint8_t* MeshtigFrame::frameToBuffer(uint32_t &size, Frame* frame) {
     buffer[9]  = frame->size >> 16 & 0xFF;
     buffer[10] = frame->size >> 8  & 0xFF;
     buffer[11] = frame->size       & 0xFF;
+    buffer[12] = frame->seq >> 8  & 0xFF;
+    buffer[13] = frame->seq       & 0xFF;
 
-    memcpy(buffer + 12, frame->buffer, frame->size);
+    memcpy(buffer + MeshtigFrame::HEADER_SIZE, frame->buffer, frame->size);
 
     return buffer;
 }
@@ -33,9 +35,10 @@ MeshtigFrame::Frame* MeshtigFrame::bufferToFrame(uint32_t size, uint8_t* buffer)
     frame->from = (buffer[4] << 8) + buffer[5];
     frame->to   = (buffer[6] << 8) + buffer[7];
     frame->size = (buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) + buffer[11];
+    frame->seq  = (buffer[12] << 8) + buffer[13];
     
     frame->buffer = new uint8_t[frame->size];
-    memcpy(frame->buffer, buffer + 12, frame->size);
+    memcpy(frame->buffer, buffer + MeshtigFrame::HEADER_SIZE, frame->size);
 
     return frame;
 }

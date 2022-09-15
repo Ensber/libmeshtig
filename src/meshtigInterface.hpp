@@ -18,10 +18,10 @@ struct MeshtigInterface {
     void (*setCh)(MeshtigInterface* self, uint16_t ch);
 
     // size and buffer are filled and should be transmitted, on error return false
-    bool (*send) (MeshtigInterface* self, uint32_t &size, char* buffer);
+    bool (*send) (MeshtigInterface* self, uint32_t &size, uint8_t* buffer);
 
     // returns a pointer to a charbuffer, or 0 if nothing was received
-    char*(*recv) (MeshtigInterface* self, uint32_t &size);
+    uint8_t*(*recv) (MeshtigInterface* self, uint32_t &size);
 
     void* userdata = nullptr;
 };

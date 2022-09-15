@@ -7,26 +7,32 @@
 #include "meshtigInterface.hpp"
 #include "meshtigFrame.hpp"
 
-typedef void (*onReceiveFnc)(MeshtigFrame::Frame* frame);
+typedef void (*onReceiveFnc)(void* userdata, MeshtigFrame::Frame* frame);
 
 struct onReceiveFncProtos {
     MeshtigFrame::Protocol protocol;
     onReceiveFnc function;
+    void* userdata;
 };
 
 
 class MeshtigStack {
 private:
+    std::vector<MeshtigFrame::Frame*> frameBuffer = std::vector<MeshtigFrame::Frame*>();
+    size_t bufferSize = 0;
+    uint16_t selfIp = 0;
+
     void poll(uint16_t interfaceId);
+    void putFrameOnBuffer(MeshtigFrame::Frame* frame);
+    void handleFrameInternal(MeshtigFrame::Frame* frame);
 public:
     std::vector<MeshtigInterface*> interfaces = std::vector<MeshtigInterface*>();
     std::vector<onReceiveFncProtos> onRecvs = std::vector<onReceiveFncProtos>();
     MeshtigRouter router = MeshtigRouter();
     
-    std::vector<MeshtigFrame::Frame*> frameBuffer = std::vector<MeshtigFrame::Frame*>();
-    size_t bufferSize = 8192; // bytes stored, before new packets get dropped TODO: maby the old ones?
+    size_t maxBufferSize = 8192; // bytes stored, before new packets get dropped TODO: maby the old ones?
 
-    MeshtigStack();
+    MeshtigStack(uint16_t ip);
 
     void step();
 
@@ -36,9 +42,9 @@ public:
     void addInterface(MeshtigInterface* interface);
     MeshtigInterface* getInterface(uint16_t ip);
 
-    void send(MeshtigFrame::Frame* frame, bool fromBuffer);
+    bool send(MeshtigFrame::Frame* frame, bool fromBuffer);
 
-    void registerProtoRecv(MeshtigFrame::Protocol protocol, onReceiveFnc onReceive);
+    void registerProtoRecv(MeshtigFrame::Protocol protocol, onReceiveFnc onReceive, void* userdata);
     void unregisterProtoRecv(MeshtigFrame::Protocol protocol);
 
     ~MeshtigStack();
